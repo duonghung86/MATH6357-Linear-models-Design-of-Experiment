@@ -1,0 +1,244 @@
+---
+title: "Homework #4"
+author: "Student: Thanh Hung Duong"
+date: "October 25, 2019"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+```
+
+### Question 1
+
+```{r 1, results='hold',echo=FALSE}
+#Set location
+library(agricolae)
+loca="C:/Users/Duong Hung/OneDrive - University Of Houston/MSDS/Fall/6357/HW"
+setwd(loca)
+fil_nam="HW4.3.txt"
+df =  file(fil_nam, open = "r") #open file
+dat=NULL
+k=1 #index of dat set
+f1=c('B1','B2','B3','B4','B5')
+f2=c('C1','C2','C3','C4')
+rows=1
+#Read each line of the data file
+while (length(oneLine <- readLines(df, n = 1, warn = FALSE)) > 0) {
+  num_lis = (strsplit(oneLine, " ")) #List of values in 1 line
+  num_lis = as.numeric(num_lis[[1]]) # Convert them to numeric
+  #Category the imported data
+  interval=length(num_lis)
+  for (i in 1:interval){
+    dat$bolt[k]=f1[i]
+    dat$chem[k]=f2[rows]
+    dat$ts[k]=num_lis[i]
+    k=k+1
+  }
+  rows=rows+1
+} 
+close(df)
+dat=data.frame(dat)
+##############
+
+fit=aov(ts~chem+bolt,data=dat)
+summary(fit)
+summary.lm(fit)
+LSD.test(fit, which = "chem")
+print('Chemical    Mean   SD')
+for (i in 1:4){
+  rows=dat$ts[dat$chem==f2[i]]
+  print(paste('  ',f2[i],'     ',mean(rows),' ',round(sd(rows),2)))
+}
+
+```
+
+Comment:
+
+\hrulefill
+
+\hrulefill
+
+\hrulefill
+
+\hrulefill
+
+\hrulefill
+
+## Question 2: potential differences between nozzle designs,with velocity
+
+```{r 2,echo=FALSE}
+fil_nam="HW4.10.txt"
+df =  file(fil_nam, open = "r") #open file
+dat=NULL
+k=1 #index of dat set
+velo=c('11.73', '14.37', '16.59', '20.43', '23.46', '28.74')
+desi=c('D1','D2','D3','D4','D5')
+rows=1
+#Read each line of the data file
+while (length(oneLine <- readLines(df, n = 1, warn = FALSE)) > 0) {
+  num_lis = (strsplit(oneLine, " ")) #List of values in 1 line
+  num_lis = as.numeric(num_lis[[1]]) # Convert them to numeric
+  #Category the imported data
+  interval=length(num_lis)
+  for (i in 1:interval){
+    dat$jev[k]=velo[i]
+    dat$design[k]=desi[rows]
+    dat$sf[k]=num_lis[i]
+    k=k+1
+  }
+  rows=rows+1
+} 
+close(df)
+dat=data.frame(dat)
+##############   a   ###########
+fit=aov(sf~design+jev,data=dat)
+summary(fit)
+summary.lm(fit)
+TukeyHSD(fit, which = "design")
+print('Design    Mean   SD')
+for (i in 1:5){
+  rows=dat$sf[dat$design==desi[i]]
+  print(paste('  ',desi[i],'     ',round(mean(rows),4),' ',round(sd(rows),4)))
+}
+plot(dat$sf~dat$design,xlab='Design',ylab = 'Shape factor',title='Nozzle design vs Shape factor')
+print('Analyze the residuals')
+par(mfrow=c(2,2))
+plot(fit)
+print('c). Take velocity as the variable of secondary interest')
+fit2=aov(sf~design,data=dat)
+summary(fit2)
+summary.lm(fit2)
+```
+Comment:
+
+\hrulefill
+
+\hrulefill
+
+\hrulefill
+
+\hrulefill
+
+\hrulefill
+
+\hrulefill
+
+\hrulefill
+
+## Question 3: Six algorithms were applied to several different software development 
+projects and the percent error in estimating the development cost was observed
+
+
+```{r 3,echo=FALSE}
+library(MASS)
+fil_nam="HW4.11.txt"
+df =  file(fil_nam, open = "r") #open file
+dat=NULL
+k=1 #index of dat set
+coln=c('P1','P2','P3','P4','P5','P6')
+rown=c('A1','A2','A3','A4','A5','A6')
+rows=1
+#Read each line of the data file
+while (length(oneLine <- readLines(df, n = 1, warn = FALSE)) > 0) {
+  num_lis = (strsplit(oneLine, " ")) #List of values in 1 line
+  num_lis = as.numeric(num_lis[[1]]) # Convert them to numeric
+  #Category the imported data
+  interval=length(num_lis)
+  for (i in 1:interval){
+    dat$proj[k]=coln[i]
+    dat$algo[k]=rown[rows]
+    dat$cost[k]=num_lis[i]
+    k=k+1
+  }
+  rows=rows+1
+} 
+close(df)
+dat=data.frame(dat)
+##############   a   ###########
+fit=aov(cost~algo+proj,data=dat)
+summary(fit)
+summary.lm(fit)
+TukeyHSD(fit, which = "algo")
+print('Algorithm    Mean   SD')
+for (i in 1:6){
+  rows=dat$cost[dat$algo==rown[i]]
+  print(paste('  ',rown[i],'     ',round(mean(rows),4),' ',round(sd(rows),4)))
+}
+plot(dat$cost~dat$algo,xlab='Algorithm',ylab = 'Development Cost',title='Algorithm types vs Software Development Cost')
+print('Analyze the residuals')
+par(mfrow=c(2,2))
+plot(fit)
+boxcox(fit)
+fit.log=aov(log(cost)~algo+proj,data=dat)
+summary(fit.log)
+summary.lm(fit.log)
+par(mfrow=c(2,2))
+plot(fit.log)
+
+```
+## Question 4
+
+```{r 3,echo=FALSE}
+fil_nam="HW4.4.txt"
+df =  file(fil_nam, open = "r") #open file
+dat=NULL
+k=1 #index of dat set
+coln=c('X','Y','Z')
+rown=c('Asp','Con','Gra')
+rows=1
+#Read each line of the data file
+while (length(oneLine <- readLines(df, n = 1, warn = FALSE)) > 0) {
+  num_lis = (strsplit(oneLine, ", ")) #List of values in 1 line
+  num_lis = as.numeric(num_lis[[1]]) # Convert them to numeric
+  #Category the imported data
+  interval=length(num_lis)
+  i=1
+  while (i<=interval){
+    dat$brand[k]=coln[(i-1)%/%4+1]
+    dat$road[k]=rown[rows]
+    dat$tl[k]=num_lis[i]
+    i=i+1
+    k=k+1
+  }
+  rows=rows+1
+} 
+close(df)
+dat=data.frame(dat)
+####################
+options(contrasts = c("contr.treatment", "contr.poly")) 
+fit1=aov(tl~road+brand+road*brand,data=dat)
+summary.lm(fit1)
+#relevel the data to 2
+l=2
+dat = within(dat, brand <- relevel(brand, ref = l),road <- relevel(road, ref = l))
+fit1=aov(tl~road+brand+road*brand,data=dat)
+summary.lm(fit1)
+#relever the data to 3
+l=3
+dat = within(dat, brand <- relevel(brand, ref = l),road <- relevel(road, ref = l))
+fit1=aov(tl~road+brand+road*brand,data=dat)
+summary.lm(fit1)
+#Centralization side condition for data
+options(contrasts = c("contr.sum", "contr.poly")) 
+fit2=lm(tl~road+brand+road*brand,data=dat)
+summary(fit2)
+dummy.coef(fit2)
+fit=aov(tl~road+brand,data=dat)
+#Compare the effects of factors
+fit.tukey=TukeyHSD(fit)
+print(fit.tukey)
+plot(fit.tukey)
+```
+
+
+\pagebreak
+
+```{r ref.label='1',eval=FALSE,}
+```
+```{r ref.label='2',eval=FALSE,}
+```
+```{r ref.label='3',eval=FALSE,}
+```

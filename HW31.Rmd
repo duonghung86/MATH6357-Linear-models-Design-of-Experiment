@@ -1,0 +1,28 @@
+---
+title: "HW3 MATH6357"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+2.22. The time to repair an electronic instrument is a normally distributed random variable measured in hours. The repair
+times for 16 such instruments chosen at random are as follows:
+Hours
+159 280 101 212
+224 379 179 264
+222 362 168 250
+149 260 485 170
+(a) You wish to know if the mean repair time exceeds 225
+hours. Set up appropriate hypotheses for investigating
+this issue.
+(b) Test the hypotheses you formulated in part (a). What
+are your conclusions? Use alpha= 0.05.
+(c) Find the P-value for the test.
+(d) Construct a 95 percent confidence interval on mean
+repair time.
+
+a,b page 51
+
+t.test(ex_1,mu=225,alternative="smaller")
